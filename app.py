@@ -2,7 +2,8 @@ import os
 import re
 import html
 import time
-from io import BytesIO
+import csv
+from io import BytesIO, StringIO
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -12,7 +13,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
@@ -23,6 +24,25 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 CONTACT_EMAIL = "your-email@example.com"
 GITHUB_REPO_URL = "https://github.com/CTMW13/engineernotes-ai"
+
+
+# --------------------------------------------------
+# Manual Daily Engineering Spark
+# Later, this can be automated with RSS/news APIs.
+# --------------------------------------------------
+
+DAILY_SPARK_TITLE = "Soft robotics is changing how machines interact with the real world"
+DAILY_SPARK_SUMMARY = (
+    "Soft robots use flexible materials instead of rigid mechanical parts, "
+    "making them useful for delicate tasks such as medical devices, search-and-rescue, "
+    "and handling fragile objects."
+)
+DAILY_SPARK_WHY_IT_MATTERS = (
+    "This matters because future robots may need to work safely around humans, "
+    "move through unpredictable environments, and interact with objects without damaging them."
+)
+DAILY_SPARK_SOURCE_LABEL = "Manual MVP briefing"
+DAILY_SPARK_SOURCE_URL = GITHUB_REPO_URL
 
 
 # --------------------------------------------------
@@ -152,6 +172,50 @@ st.markdown(
         margin-bottom: 0.45rem;
         font-size: 0.9rem;
         font-weight: 650;
+    }
+
+    .spark-card {
+        background: rgba(255, 248, 241, 0.94);
+        border: 1px solid rgba(217, 130, 91, 0.24);
+        border-left: 7px solid var(--smoky-orange);
+        border-radius: 22px;
+        padding: 1.25rem 1.35rem;
+        margin-bottom: 1.4rem;
+        box-shadow: 0 12px 30px rgba(30, 58, 95, 0.08);
+    }
+
+    .spark-label {
+        display: inline-block;
+        background: linear-gradient(135deg, #D9825B 0%, #C96A43 100%);
+        color: white !important;
+        padding: 0.34rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin-bottom: 0.7rem;
+    }
+
+    .spark-title {
+        font-size: 1.25rem;
+        font-weight: 850;
+        color: var(--deep-blue) !important;
+        margin-bottom: 0.55rem;
+    }
+
+    .spark-text {
+        color: var(--slate) !important;
+        line-height: 1.6;
+        margin-bottom: 0.45rem;
+    }
+
+    .spark-source a {
+        color: var(--burnt-orange) !important;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .spark-source a:hover {
+        text-decoration: underline;
     }
 
     .info-card {
@@ -319,7 +383,6 @@ st.markdown(
         opacity: 0.85 !important;
     }
 
-    /* Main select box */
     [data-baseweb="select"] > div {
         background-color: #FFFFFF !important;
         color: var(--deep-blue) !important;
@@ -333,13 +396,11 @@ st.markdown(
         color: var(--deep-blue) !important;
     }
 
-    /* Dropdown arrow */
     [data-baseweb="select"] svg {
         color: var(--deep-blue) !important;
         fill: var(--deep-blue) !important;
     }
 
-    /* Hide the tiny input caret/rectangle inside Streamlit select boxes */
     [data-baseweb="select"] input {
         color: transparent !important;
         caret-color: transparent !important;
@@ -492,6 +553,26 @@ st.markdown(
 
 
 # --------------------------------------------------
+# Daily Engineering Spark
+# --------------------------------------------------
+
+st.markdown(
+    f"""
+    <div class="spark-card">
+        <div class="spark-label">Daily Engineering Spark</div>
+        <div class="spark-title">{DAILY_SPARK_TITLE}</div>
+        <div class="spark-text">{DAILY_SPARK_SUMMARY}</div>
+        <div class="spark-text"><strong>Why it matters:</strong> {DAILY_SPARK_WHY_IT_MATTERS}</div>
+        <div class="spark-source">
+            Source: <a href="{DAILY_SPARK_SOURCE_URL}" target="_blank">{DAILY_SPARK_SOURCE_LABEL}</a>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# --------------------------------------------------
 # Intro cards
 # --------------------------------------------------
 
@@ -524,7 +605,7 @@ with col_c:
         """
         <div class="info-card">
             <h3>3. Download your pack</h3>
-            <p>Export your generated material as a clean PDF or Markdown file.</p>
+            <p>Export your generated material as PDF, Markdown, or flashcard files when available.</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -616,7 +697,7 @@ with left_col:
     notes = st.text_area(
         "Paste your notes here:",
         height=330,
-        placeholder="Example: Density = mass divided by volume. SI unit is kg/m³..."
+        placeholder="Example: Ohm’s law states that current equals voltage divided by resistance. I = V / R..."
     )
 
     note_length = len(notes)
@@ -658,12 +739,12 @@ with right_col:
         ]
     )
 
-    st.info("Tip: Use Full Revision Pack for the most complete output.")
+    st.info("Tip: Use Flashcards if you want CSV flashcard export.")
 
-    test_mode = st.checkbox("Test mode: no API credits")
+    demo_mode = st.checkbox("Demo mode: sample density pack")
 
-    if test_mode:
-        st.success("Test mode uses sample content only.")
+    if demo_mode:
+        st.success("Demo mode uses sample density content only.")
 
     with st.expander("How to get better results"):
         st.write(
@@ -672,6 +753,7 @@ with right_col:
             - Include formulas, examples, or mistakes you want explained.
             - Choose the correct subject and difficulty level.
             - Use **Full Revision Pack** for the most complete output.
+            - Use **Flashcards** if you want CSV flashcard export.
             - Avoid pasting sensitive personal data.
             """
         )
@@ -738,9 +820,11 @@ For a Full Revision Pack, include:
 8. Practice Questions
 9. Quick Recap
 
-For Flashcards, use this format:
-Q: question
-A: answer
+For Flashcards, use exactly this format:
+Q: question text
+A: answer text
+
+Create at least 8 flashcards if there is enough content.
 
 For Quiz Questions, include answers underneath a separate "Answers" heading.
 
@@ -750,7 +834,7 @@ Notes:
 
 
 # --------------------------------------------------
-# Fake output for testing without API credits
+# Fake output for demo mode
 # --------------------------------------------------
 
 def fake_output():
@@ -806,11 +890,17 @@ Density = Mass / Volume
 
 ## 6. Flashcards
 
-Q: What does density measure?  
+Q: What does density measure?
 A: How much mass is packed into a certain volume.
 
-Q: What is the formula for density?  
+Q: What is the formula for density?
 A: Density = Mass / Volume.
+
+Q: What is the SI unit of density?
+A: kg/m³.
+
+Q: What does rho represent?
+A: Density.
 
 ## 7. Practice Questions
 
@@ -863,6 +953,141 @@ def make_safe_filename(text):
         title = "engineernotes_revision_pack"
 
     return title
+
+
+# --------------------------------------------------
+# Flashcard helpers
+# --------------------------------------------------
+
+def extract_flashcards(text):
+    """
+    Extracts flashcards written as:
+    Q: question
+    A: answer
+
+    Returns a list of dictionaries:
+    [{"front": "...", "back": "..."}]
+    """
+
+    flashcards = []
+    current_question = None
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+
+        if line.lower().startswith("q:"):
+            current_question = line[2:].strip()
+
+        elif line.lower().startswith("a:") and current_question:
+            answer = line[2:].strip()
+
+            if current_question and answer:
+                flashcards.append(
+                    {
+                        "front": current_question,
+                        "back": answer
+                    }
+                )
+
+            current_question = None
+
+    return flashcards
+
+
+def flashcards_to_csv(flashcards):
+    """
+    Converts flashcards into CSV format with Front and Back columns.
+    Useful for spreadsheet import and future Anki/Quizlet-style workflows.
+    """
+
+    output = StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(["Front", "Back"])
+
+    for card in flashcards:
+        writer.writerow([card["front"], card["back"]])
+
+    return output.getvalue()
+
+
+def flashcards_to_pdf(flashcards, pdf_title):
+    """
+    Creates a simple flashcard PDF with one card per page.
+    """
+
+    buffer = BytesIO()
+
+    font_name = "Helvetica"
+    bold_font_name = "Helvetica-Bold"
+
+    try:
+        pdfmetrics.registerFont(TTFont("Arial", r"C:\Windows\Fonts\arial.ttf"))
+        pdfmetrics.registerFont(TTFont("Arial-Bold", r"C:\Windows\Fonts\arialbd.ttf"))
+        font_name = "Arial"
+        bold_font_name = "Arial-Bold"
+    except Exception:
+        pass
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=2 * cm,
+        leftMargin=2 * cm,
+        topMargin=2 * cm,
+        bottomMargin=2 * cm,
+        title=f"{pdf_title} Flashcards",
+        author="EngineerNotes AI",
+        subject="AI-generated flashcards",
+        creator="EngineerNotes AI"
+    )
+
+    title_style = ParagraphStyle(
+        name="FlashcardTitle",
+        fontName=bold_font_name,
+        fontSize=18,
+        leading=22,
+        spaceAfter=16,
+        textColor=colors.HexColor("#1E3A5F")
+    )
+
+    label_style = ParagraphStyle(
+        name="FlashcardLabel",
+        fontName=bold_font_name,
+        fontSize=12,
+        leading=16,
+        spaceAfter=6,
+        textColor=colors.HexColor("#C96A43")
+    )
+
+    body_style = ParagraphStyle(
+        name="FlashcardBody",
+        fontName=font_name,
+        fontSize=13,
+        leading=18,
+        spaceAfter=14,
+        textColor=colors.HexColor("#334155")
+    )
+
+    story = []
+
+    for index, card in enumerate(flashcards, start=1):
+        story.append(Paragraph(f"Flashcard {index}", title_style))
+        story.append(Paragraph("Front", label_style))
+        story.append(Paragraph(html.escape(card["front"]), body_style))
+        story.append(Spacer(1, 14))
+        story.append(Paragraph("Back", label_style))
+        story.append(Paragraph(html.escape(card["back"]), body_style))
+
+        if index != len(flashcards):
+            story.append(PageBreak())
+
+    doc.build(story)
+
+    pdf_data = buffer.getvalue()
+    buffer.close()
+
+    return pdf_data
 
 
 # --------------------------------------------------
@@ -1081,11 +1306,15 @@ def show_download_buttons(result):
     base_filename = make_safe_filename(result)
     pdf_data = convert_markdown_to_pdf(result, document_title)
 
+    flashcards = extract_flashcards(result)
+
+    st.markdown("### Downloads")
+
     col1, col2 = st.columns(2)
 
     with col1:
         st.download_button(
-            label="Download as PDF",
+            label="Download Revision Pack as PDF",
             data=pdf_data,
             file_name=f"{base_filename}.pdf",
             mime="application/pdf",
@@ -1094,12 +1323,38 @@ def show_download_buttons(result):
 
     with col2:
         st.download_button(
-            label="Download as Markdown",
+            label="Download Revision Pack as Markdown",
             data=result,
             file_name=f"{base_filename}.md",
             mime="text/markdown",
             key="download_markdown"
         )
+
+    if flashcards:
+        flashcard_csv = flashcards_to_csv(flashcards)
+        flashcard_pdf = flashcards_to_pdf(flashcards, document_title)
+
+        st.markdown("### Flashcard downloads")
+
+        flash_col1, flash_col2 = st.columns(2)
+
+        with flash_col1:
+            st.download_button(
+                label="Download Flashcards as CSV",
+                data=flashcard_csv,
+                file_name=f"{base_filename}_flashcards.csv",
+                mime="text/csv",
+                key="download_flashcards_csv"
+            )
+
+        with flash_col2:
+            st.download_button(
+                label="Download Flashcards as PDF",
+                data=flashcard_pdf,
+                file_name=f"{base_filename}_flashcards.pdf",
+                mime="application/pdf",
+                key="download_flashcards_pdf"
+            )
 
 
 # --------------------------------------------------
@@ -1109,7 +1364,7 @@ def show_download_buttons(result):
 generate_clicked = st.button("Generate Revision Pack")
 
 if generate_clicked:
-    if not notes.strip() and not test_mode:
+    if not notes.strip() and not demo_mode:
         st.warning("Paste some notes first.")
     else:
         st.markdown('<div class="section-title">Generated result</div>', unsafe_allow_html=True)
@@ -1150,14 +1405,14 @@ if generate_clicked:
             st.markdown(
                 """
                 <div class="metric-card">
-                    <strong>Exports</strong><br>PDF + Markdown
+                    <strong>Exports</strong><br>PDF + Markdown + Flashcards
                 </div>
                 """,
                 unsafe_allow_html=True
             )
 
-        if test_mode:
-            st.success("Test mode active: no API credits used.")
+        if demo_mode:
+            st.success("Demo mode active: sample density pack used. No API credits used.")
 
             with st.status("Building sample revision pack...", expanded=True) as status:
                 st.write("Reading sample notes...")
@@ -1251,7 +1506,7 @@ with feedback_col:
         st.write(
             """
             Useful feedback includes:
-            - Broken PDF or Markdown downloads
+            - Broken PDF, Markdown, or flashcard downloads
             - Confusing explanations
             - Missing subjects or levels
             - UI suggestions
