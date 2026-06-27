@@ -1,6 +1,6 @@
-# EngineerNotes AI
+# Nexa Study
 
-EngineerNotes AI is a local MVP of an AI-powered study assistant web app built with Python, Streamlit, and the OpenAI API.
+Nexa Study is a local MVP of an AI-powered study assistant web app built with Python, Streamlit, and the OpenAI API.
 
 ## Features
 
