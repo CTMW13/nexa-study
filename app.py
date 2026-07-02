@@ -88,9 +88,14 @@ st.markdown(
         <div class="spark-label">Daily Engineering Spark</div>
         <div class="spark-title">{DAILY_SPARK_TITLE}</div>
         <div class="spark-text">{DAILY_SPARK_SUMMARY}</div>
-        <div class="spark-text"><strong>Why it matters:</strong> {DAILY_SPARK_WHY_IT_MATTERS}</div>
+        <div class="spark-text">
+            <strong>Why it matters:</strong> {DAILY_SPARK_WHY_IT_MATTERS}
+        </div>
         <div class="spark-source">
-            Source: <a href="{DAILY_SPARK_SOURCE_URL}" target="_blank">{DAILY_SPARK_SOURCE_LABEL}</a>
+            Source:
+            <a href="{DAILY_SPARK_SOURCE_URL}" target="_blank">
+                {DAILY_SPARK_SOURCE_LABEL}
+            </a>
         </div>
     </div>
     """,
@@ -158,19 +163,30 @@ st.sidebar.markdown(
     """
     <div class="premium-card">
         <div class="premium-card-title">🎨 PDF styling themes 🔒</div>
-        <div class="premium-card-text">Choose clean STEM, exam mode, minimal, or engineering notebook layouts.</div>
+        <div class="premium-card-text">
+            Choose clean STEM, exam mode, minimal, or engineering notebook layouts.
+        </div>
     </div>
+
     <div class="premium-card">
         <div class="premium-card-title">📂 File uploads 🔒</div>
-        <div class="premium-card-text">Upload notes, PDFs, slides, and revision sheets directly.</div>
+        <div class="premium-card-text">
+            Upload notes, PDFs, slides, and revision sheets directly.
+        </div>
     </div>
+
     <div class="premium-card">
         <div class="premium-card-title">🧾 Saved revision history 🔒</div>
-        <div class="premium-card-text">Save generated packs and return to them later.</div>
+        <div class="premium-card-text">
+            Save generated packs and return to them later.
+        </div>
     </div>
+
     <div class="premium-card">
         <div class="premium-card-title">⚙️ Custom study branding 🔒</div>
-        <div class="premium-card-text">Personalise generated packs with preferred formatting and style.</div>
+        <div class="premium-card-text">
+            Personalise generated packs with preferred formatting and style.
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -181,9 +197,17 @@ st.sidebar.markdown(
 # Main input area
 # --------------------------------------------------
 
-st.markdown('<div class="section-title">Create a revision pack</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="section-caption">Paste your notes, choose an output type, then generate your study material.</div>',
+    '<div class="section-title">Create a revision pack</div>',
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <div class="section-caption">
+        Paste your notes, choose an output type, then generate your study material.
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
@@ -193,7 +217,10 @@ with left_col:
     notes = st.text_area(
         "Paste your notes here:",
         height=330,
-        placeholder="Example: Ohm’s law states that current equals voltage divided by resistance. I = V / R...",
+        placeholder=(
+            "Example: Ohm’s law states that current equals voltage divided by resistance. "
+            "I = V / R..."
+        ),
     )
 
     note_length = len(notes)
@@ -247,12 +274,37 @@ with right_col:
 st.markdown(
     """
     <div class="privacy-note">
-        <strong>Privacy reminder:</strong> Do not paste sensitive personal information, private addresses,
-        student ID numbers, medical details, passwords, or anything you would not want processed by an AI service.
+        <strong>Privacy reminder:</strong> Do not paste sensitive personal information,
+        private addresses, student ID numbers, medical details, passwords, or anything
+        you would not want processed by an AI service.
     </div>
     """,
     unsafe_allow_html=True,
 )
+
+
+# --------------------------------------------------
+# Tiny rubber duck loading helper
+# --------------------------------------------------
+
+def show_duck_loading(slot, message):
+    slot.markdown(
+        f"""
+        <div class="duck-loading">
+            <span>{message}</span>
+            <span class="rubber-duck">
+                <span class="duck-eye"></span>
+                <span class="duck-beak"></span>
+                <span class="duck-shine"></span>
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def clear_loading_area(loading_area):
+    loading_area.empty()
 
 
 # --------------------------------------------------
@@ -316,6 +368,39 @@ def show_download_buttons(result):
 
 
 # --------------------------------------------------
+# Generated result preview
+# --------------------------------------------------
+
+def make_result_preview(result, max_characters=1400):
+    if len(result) <= max_characters:
+        return result
+
+    preview = result[:max_characters].rstrip()
+
+    if "\n" in preview:
+        preview = preview.rsplit("\n", 1)[0]
+
+    return preview + "\n\n..."
+
+
+def show_result_area(result):
+    preview_text = make_result_preview(result)
+
+    with st.expander("Preview generated content", expanded=False):
+        st.caption("Open this to quickly check the generated study material.")
+
+        with st.container(border=True):
+            st.markdown(preview_text)
+
+        if preview_text != result:
+            st.info(
+                "This is a short preview. The full generated content is included in the downloads."
+            )
+
+    show_download_buttons(result)
+
+
+# --------------------------------------------------
 # Generate button logic
 # --------------------------------------------------
 
@@ -324,8 +409,12 @@ generate_clicked = st.button("Generate Revision Pack")
 if generate_clicked:
     if not notes.strip() and not demo_mode:
         st.warning("Paste some notes first.")
+
     else:
-        st.markdown('<div class="section-title">Generated result</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-title">Generated result</div>',
+            unsafe_allow_html=True,
+        )
 
         summary_col_1, summary_col_2, summary_col_3, summary_col_4 = st.columns(4)
 
@@ -372,27 +461,36 @@ if generate_clicked:
         if demo_mode:
             st.success("Demo mode active: sample density pack used. No API credits used.")
 
-            with st.status("Building sample revision pack...", expanded=True) as status:
-                st.write("Reading sample notes...")
-                time.sleep(0.2)
-                st.write("Structuring key concepts...")
-                time.sleep(0.2)
-                st.write("Formatting revision pack...")
-                time.sleep(0.2)
-                status.update(label="Sample revision pack ready.", state="complete")
+            loading_area = st.empty()
+
+            with loading_area.container():
+                duck_slot = st.empty()
+
+                show_duck_loading(duck_slot, "Cleaning up your notes...")
+                time.sleep(1.2)
+
+                show_duck_loading(duck_slot, f"Generating your {output_type.lower()}...")
+                time.sleep(1.2)
+
+                show_duck_loading(duck_slot, "Preparing your downloads...")
+                time.sleep(0.8)
+
+            clear_loading_area(loading_area)
+
+            try:
+                st.toast("Sample revision pack ready.")
+            except Exception:
+                pass
 
             result = fake_output()
-
-            with st.container(border=True):
-                st.markdown(result)
-
-            show_download_buttons(result)
+            show_result_area(result)
 
         else:
             st.warning("Live API mode: this may use API credits.")
 
             if not api_key or not client:
                 st.error("No API key found. Check your .env file or Streamlit secrets.")
+
             else:
                 prompt = build_prompt(
                     notes=notes,
@@ -403,27 +501,31 @@ if generate_clicked:
                 )
 
                 try:
-                    with st.status("Generating your revision pack...", expanded=True) as status:
-                        st.write("Reading your notes...")
-                        time.sleep(0.3)
+                    loading_area = st.empty()
 
-                        st.write("Finding key concepts...")
-                        time.sleep(0.3)
+                    with loading_area.container():
+                        duck_slot = st.empty()
 
-                        st.write("Building structured revision content...")
+                        show_duck_loading(duck_slot, "Cleaning up your notes...")
+                        time.sleep(1.2)
+
+                        show_duck_loading(duck_slot, f"Generating your {output_type.lower()}...")
                         result = generate_live_output(client, prompt)
 
-                        st.write("Preparing downloads...")
-                        time.sleep(0.3)
+                        show_duck_loading(duck_slot, "Preparing your downloads...")
+                        time.sleep(0.8)
 
-                        status.update(label="Revision pack ready.", state="complete")
+                    clear_loading_area(loading_area)
 
-                    with st.container(border=True):
-                        st.markdown(result)
+                    try:
+                        st.toast("Revision pack ready.")
+                    except Exception:
+                        pass
 
-                    show_download_buttons(result)
+                    show_result_area(result)
 
                 except Exception as error:
+                    clear_loading_area(loading_area)
                     st.error("Something went wrong.")
                     st.code(str(error))
 
@@ -432,7 +534,10 @@ if generate_clicked:
 # Feedback and privacy sections
 # --------------------------------------------------
 
-st.markdown('<div class="section-title">Feedback & privacy</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-title">Feedback & privacy</div>',
+    unsafe_allow_html=True,
+)
 
 feedback_col, privacy_col = st.columns(2)
 
@@ -508,7 +613,8 @@ with privacy_col:
 st.markdown(
     f"""
     <div class="mini-footer">
-        {APP_NAME} MVP • Built with Python, Streamlit, OpenAI API, ReportLab, and a suspicious amount of debugging.<br>
+        {APP_NAME} MVP • Built with Python, Streamlit, OpenAI API, ReportLab,
+        and a suspicious amount of debugging.<br>
         <a href="{FEEDBACK_FORM_URL}" target="_blank">Send anonymous feedback</a>
     </div>
     """,
