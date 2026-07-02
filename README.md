@@ -19,3 +19,9 @@ Nexa Study is a local MVP of an AI-powered study assistant web app built with Py
 ## Status
 
 Local prototype. Not deployed yet.
+
+## Copyright
+
+Copyright © 2026 Courtney Walsh. Nexa Study. All rights reserved.
+
+This repository is public for portfolio and review purposes. No licence is currently granted for copying, distribution, modification, or commercial use.

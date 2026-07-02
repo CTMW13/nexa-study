@@ -23,3 +23,46 @@ DAILY_SPARK_WHY_IT_MATTERS = (
 
 DAILY_SPARK_SOURCE_LABEL = "Manual MVP briefing"
 DAILY_SPARK_SOURCE_URL = GITHUB_REPO_URL
+
+HERO_BADGES = [
+    "📐 Maths",
+    "⚡ Physics",
+    "🛠️ Engineering",
+    "🤖 Robotics",
+    "💻 Computer Science",
+    "🧠 AI / ML",
+]
+
+SUBJECT_AREAS = [
+    "General Study",
+    "Maths",
+    "Physics",
+    "Computer Science",
+    "Engineering",
+    "Robotics",
+    "AI / Machine Learning",
+]
+
+DIFFICULTY_LEVELS = [
+    "GCSE",
+    "A-Level",
+    "Foundation Year",
+    "University Year 1",
+    "Beginner Friendly",
+]
+
+OUTPUT_STYLES = [
+    "Concise",
+    "Detailed",
+    "Exam Revision",
+    "Step-by-Step Explanation",
+]
+
+OUTPUT_TYPES = [
+    "Summary",
+    "Flashcards",
+    "Quiz Questions",
+    "Full Revision Pack",
+    "Practice Questions",
+    "Exam Cheat Sheet",
+]
