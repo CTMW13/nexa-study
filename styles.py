@@ -775,5 +775,210 @@ CUSTOM_CSS = """
     .mini-footer a:hover {
         text-decoration: underline;
     }
+
+    .feedback-button-gap {
+        height: 0.35rem;
+    }
+
+    .feedback-link-gap {
+        height: 0.75rem;
+    }
+
+    /* --------------------------------------------------
+    Final UI fixes
+    -------------------------------------------------- */
+
+    /* Generate button text boldness */
+    div.stButton > button,
+    div.stButton > button p,
+    div.stButton > button span {
+        font-weight: 850 !important;
+    }
+
+    /* Download button text boldness */
+    div.stDownloadButton > button,
+    div.stDownloadButton > button p,
+    div.stDownloadButton > button span {
+        font-weight: 850 !important;
+    }
+
+    /* Make bordered Streamlit containers feel more like cards */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        border-color: rgba(217, 130, 91, 0.24) !important;
+        border-radius: 18px !important;
+        box-shadow: 0 10px 24px rgba(30, 58, 95, 0.07) !important;
+        background: rgba(255, 248, 241, 0.58) !important;
+    }
+
+    /* Change focus border from lilac/pink to thematic orange */
+    textarea:focus,
+    .stTextArea textarea:focus,
+    input:focus {
+        border-color: rgba(217, 130, 91, 0.82) !important;
+        box-shadow:
+            0 0 0 3px rgba(217, 130, 91, 0.16),
+            0 14px 32px rgba(30, 58, 95, 0.10) !important;
+    }
+
+    /* Select dropdown focus colour */
+    [data-baseweb="select"] > div:focus-within {
+        border-color: rgba(217, 130, 91, 0.82) !important;
+        box-shadow:
+            0 0 0 3px rgba(217, 130, 91, 0.14) !important;
+    }
+
+    /* Small feedback spacing fix */
+    .feedback-button-gap {
+        height: 0.35rem;
+    }
+
+    .feedback-link-gap {
+        height: 0.75rem;
+    }
+
+    /* --------------------------------------------------
+    Download card alignment and styling
+    -------------------------------------------------- */
+
+    .download-card-marker {
+        display: none;
+    }
+
+    /* Target the actual bordered container that holds the downloads */
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-marker),
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title),
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text) {
+        background: rgba(255, 248, 241, 0.94) !important;
+        border: 1.5px solid rgba(217, 130, 91, 0.34) !important;
+        border-radius: 22px !important;
+        box-shadow:
+            0 16px 36px rgba(30, 58, 95, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
+        padding: 1.2rem !important;
+    }
+
+    /* Add cleaner internal spacing */
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-marker)
+    [data-testid="stVerticalBlock"],
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
+    [data-testid="stVerticalBlock"],
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
+    [data-testid="stVerticalBlock"] {
+        gap: 0.85rem !important;
+    }
+
+    /* Title inside the downloads card */
+    .download-card-title {
+        font-size: 1.2rem;
+        font-weight: 850;
+        color: var(--deep-blue) !important;
+        margin: 0 0 0.15rem 0;
+    }
+
+    /* Caption under the title */
+    .download-card-caption {
+        color: var(--mid-blue) !important;
+        font-size: 0.95rem;
+        line-height: 1.45;
+        margin-bottom: 0.35rem;
+    }
+
+    /* Helper text beside the interactive deck button */
+    .download-helper-text {
+        color: var(--mid-blue) !important;
+        font-size: 0.94rem;
+        line-height: 1.45;
+        padding-top: 0.62rem;
+    }
+
+    /* Make download buttons fill their column neatly */
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
+    div.stDownloadButton > button,
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
+    div.stDownloadButton > button {
+        width: 100%;
+        min-height: 3rem;
+        font-weight: 850 !important;
+    }
+
+    /* Keep advanced export aligned inside the same card */
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
+    [data-testid="stExpander"],
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
+    [data-testid="stExpander"] {
+        width: 100%;
+        margin-top: 0.4rem;
+    }
+
+    /* Make the advanced dropdown less visually overpowering inside downloads */
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
+    [data-testid="stExpander"] summary,
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
+    [data-testid="stExpander"] summary {
+        border-radius: 14px !important;
+    }
+
+    /* Remove random heading spacing inside the download card */
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
+    [data-testid="stMarkdownContainer"] h3,
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
+    [data-testid="stMarkdownContainer"] h4 {
+        margin-top: 0 !important;
+    }
+
+    /* --------------------------------------------------
+   Strong downloads card styling
+   -------------------------------------------------- */
+
+.st-key-downloads_card {
+    background: rgba(255, 248, 241, 0.94) !important;
+    border: 1.5px solid rgba(217, 130, 91, 0.34) !important;
+    border-radius: 22px !important;
+    box-shadow:
+        0 16px 36px rgba(30, 58, 95, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
+    padding: 1.2rem !important;
+}
+
+.st-key-downloads_card [data-testid="stVerticalBlock"] {
+    gap: 0.85rem !important;
+}
+
+.st-key-downloads_card .download-card-title {
+    font-size: 1.2rem;
+    font-weight: 850;
+    color: var(--deep-blue) !important;
+    margin: 0 0 0.15rem 0;
+}
+
+.st-key-downloads_card .download-card-caption {
+    color: var(--mid-blue) !important;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin-bottom: 0.35rem;
+}
+
+.st-key-downloads_card .download-helper-text {
+    color: var(--mid-blue) !important;
+    font-size: 0.94rem;
+    line-height: 1.45;
+    padding-top: 0.62rem;
+}
+
+.st-key-downloads_card div.stDownloadButton > button {
+    width: 100%;
+    min-height: 3rem;
+    font-weight: 850 !important;
+}
+
+.st-key-downloads_card [data-testid="stExpander"] {
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+.st-key-downloads_card [data-testid="stExpander"] summary {
+    border-radius: 14px !important;
+}
+
 </style>
 """

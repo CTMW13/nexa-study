@@ -33,7 +33,7 @@ def create_openai_client(api_key):
     return OpenAI(api_key=api_key)
 
 
-def build_prompt(notes, output_type, subject, difficulty, style):
+def build_prompt(notes, output_type, subject, difficulty, style, flashcard_count=8):
     return f"""
 You are Nexa Study, a study assistant for STEM students.
 
@@ -42,6 +42,7 @@ Create a {output_type} from the notes below.
 Subject area: {subject}
 Difficulty level: {difficulty}
 Output style: {style}
+Target number of flashcards: {flashcard_count}
 
 Formatting rules:
 - Use clean Markdown formatting.
@@ -69,6 +70,16 @@ Make the output:
 
 If the notes contain a mistake, gently correct it and explain the correct version.
 
+Important flashcard rules:
+- If the selected output type is Flashcards, create approximately {flashcard_count} flashcards.
+- If the selected output type is Full Revision Pack, include approximately {flashcard_count} flashcards in the Flashcards section.
+- If the notes contain enough useful information, aim for the target number.
+- If the topic is too short, create fewer strong flashcards instead of weak repetitive ones.
+- Each flashcard must use exactly this format:
+
+Q: question text
+A: answer text
+
 For a Full Revision Pack, include:
 1. Key Definition
 2. Main Formula
@@ -79,12 +90,6 @@ For a Full Revision Pack, include:
 7. Flashcards
 8. Practice Questions
 9. Quick Recap
-
-For Flashcards, use exactly this format:
-Q: question text
-A: answer text
-
-Create at least 8 flashcards if there is enough content.
 
 For Quiz Questions, include answers underneath a separate "Answers" heading.
 

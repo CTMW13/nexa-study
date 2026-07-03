@@ -66,3 +66,10 @@ OUTPUT_TYPES = [
     "Practice Questions",
     "Exam Cheat Sheet",
 ]
+FLASHCARD_COUNTS = [
+    4,
+    8,
+    12,
+    16,
+    20,
+]

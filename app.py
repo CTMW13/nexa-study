@@ -19,6 +19,7 @@ from config import (
     DAILY_SPARK_WHY_IT_MATTERS,
     DIFFICULTY_LEVELS,
     FEEDBACK_FORM_URL,
+    FLASHCARD_COUNTS,
     GITHUB_REPO_URL,
     HERO_BADGES,
     OUTPUT_STYLES,
@@ -28,11 +29,11 @@ from config import (
 from flashcard_utils import extract_flashcards, flashcards_to_csv
 from pdf_utils import (
     convert_markdown_to_pdf,
-    flashcards_to_pdf,
     get_document_title,
     make_safe_filename,
 )
 from styles import CUSTOM_CSS
+from html_utils import flashcards_to_interactive_html
 
 
 # --------------------------------------------------
@@ -239,10 +240,16 @@ with left_col:
         length_label = "Long notes"
         length_message = "Consider using a detailed or exam revision style."
 
+    if note_length == 0:
+        note_metric_line = "0 words • 0 characters"
+    else:
+        note_metric_line = f"{word_count} words • {note_length} characters"
+
     st.markdown(
         f"""
         <div class="metric-card">
-            <strong>{length_label}</strong> • {word_count} words • {note_length} characters<br>
+            <strong>{length_label}</strong><br>
+            {note_metric_line}<br>
             {length_message}
         </div>
         """,
@@ -252,7 +259,17 @@ with left_col:
 with right_col:
     output_type = st.selectbox("Output type", OUTPUT_TYPES)
 
-    st.info("Tip: Use Flashcards if you want CSV flashcard export.")
+    flashcard_count = st.selectbox(
+        "Target flashcards",
+        FLASHCARD_COUNTS,
+        index=1,
+        help=(
+            "Choose how many flashcards Nexa Study should try to generate. "
+            "Short topics may produce fewer strong cards."
+        ),
+    )
+
+    st.info("Tip: Use Flashcards or Full Revision Pack if you want an interactive study deck.")
 
     demo_mode = st.checkbox("Demo mode: sample density pack")
 
@@ -266,7 +283,7 @@ with right_col:
             - Include formulas, examples, or mistakes you want explained.
             - Choose the correct subject and difficulty level.
             - Use **Full Revision Pack** for the most complete output.
-            - Use **Flashcards** if you want CSV flashcard export.
+            - Use **Flashcards** if you want an interactive study deck.
             - Avoid pasting sensitive personal data.
             """
         )
@@ -311,59 +328,125 @@ def clear_loading_area(loading_area):
 # Download buttons
 # --------------------------------------------------
 
-def show_download_buttons(result):
+def make_flashcard_deck_title(document_title):
+    cleaned_title = document_title.strip()
+
+    cleaned_title = cleaned_title.replace("— Full Revision Pack", "")
+    cleaned_title = cleaned_title.replace("- Full Revision Pack", "")
+    cleaned_title = cleaned_title.replace("Full Revision Pack", "")
+    cleaned_title = cleaned_title.strip()
+
+    if cleaned_title.lower().startswith("flashcards:"):
+        return cleaned_title
+
+    if cleaned_title.lower().endswith(" flashcards"):
+        cleaned_title = cleaned_title[:-len(" flashcards")].strip()
+
+    return f"Flashcards: {cleaned_title}"
+
+def show_download_buttons(result, output_type):
     document_title = get_document_title(result)
     base_filename = make_safe_filename(result)
-    pdf_data = convert_markdown_to_pdf(result, document_title)
-
     flashcards = extract_flashcards(result)
+
+    is_flashcard_output = output_type == "Flashcards"
+    is_full_revision_pack = output_type == "Full Revision Pack"
 
     st.markdown("### Downloads")
 
-    col1, col2 = st.columns(2)
+    with st.container(border=True, key="downloads_card"):
+        st.markdown('<div class="download-card-marker"></div>', unsafe_allow_html=True)
 
-    with col1:
-        st.download_button(
-            label="Download Revision Pack as PDF",
-            data=pdf_data,
-            file_name=f"{base_filename}.pdf",
-            mime="application/pdf",
-            key="download_pdf",
-        )
-
-    with col2:
-        st.download_button(
-            label="Download Revision Pack as Markdown",
-            data=result,
-            file_name=f"{base_filename}.md",
-            mime="text/markdown",
-            key="download_markdown",
-        )
-
-    if flashcards:
-        flashcard_csv = flashcards_to_csv(flashcards)
-        flashcard_pdf = flashcards_to_pdf(flashcards, document_title)
-
-        st.markdown("### Flashcard downloads")
-
-        flash_col1, flash_col2 = st.columns(2)
-
-        with flash_col1:
-            st.download_button(
-                label="Download Flashcards as CSV",
-                data=flashcard_csv,
-                file_name=f"{base_filename}_flashcards.csv",
-                mime="text/csv",
-                key="download_flashcards_csv",
+        if not is_flashcard_output:
+            st.markdown(
+                f"""
+                <div class="download-card-title">{output_type}</div>
+                <div class="download-card-caption">
+                    Export your generated {output_type.lower()} as a clean study file.
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
 
-        with flash_col2:
-            st.download_button(
-                label="Download Flashcards as PDF",
-                data=flashcard_pdf,
-                file_name=f"{base_filename}_flashcards.pdf",
-                mime="application/pdf",
-                key="download_flashcards_pdf",
+            pdf_data = convert_markdown_to_pdf(result, document_title)
+
+            download_col_1, download_col_2 = st.columns(2)
+
+            with download_col_1:
+                st.download_button(
+                    label=f"Download {output_type} as PDF",
+                    data=pdf_data,
+                    file_name=f"{base_filename}.pdf",
+                    mime="application/pdf",
+                    key="download_pdf",
+                )
+
+            with download_col_2:
+                st.download_button(
+                    label=f"Download {output_type} as Markdown",
+                    data=result,
+                    file_name=f"{base_filename}.md",
+                    mime="text/markdown",
+                    key="download_markdown",
+                )
+
+        if flashcards and (is_flashcard_output or is_full_revision_pack):
+            st.markdown(
+                """
+                <div class="download-card-title">Study tools</div>
+                <div class="download-card-caption">
+                    Download an interactive flashcard deck that opens in your browser.
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            deck_title = make_flashcard_deck_title(document_title)
+
+            interactive_deck = flashcards_to_interactive_html(
+                flashcards=flashcards,
+                title=deck_title,
+            )
+
+            deck_col_1, deck_col_2 = st.columns([1, 2])
+
+            with deck_col_1:
+                st.download_button(
+                    label="Download Interactive Study Deck",
+                    data=interactive_deck,
+                    file_name=f"{base_filename}_interactive_flashcards.html",
+                    mime="text/html",
+                    key="download_interactive_flashcards",
+                )
+
+            with deck_col_2:
+                st.markdown(
+                    """
+                    <div class="download-helper-text">
+                        Best for active recall, self-testing, and offline browser study.
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            with st.expander("Advanced flashcard export"):
+                flashcard_csv = flashcards_to_csv(flashcards)
+
+                st.download_button(
+                    label="Download Flashcards as CSV",
+                    data=flashcard_csv,
+                    file_name=f"{base_filename}_flashcards.csv",
+                    mime="text/csv",
+                    key="download_flashcards_csv",
+                )
+
+                st.caption(
+                    "CSV is useful if you want to import flashcards into another study tool."
+                )
+
+        elif is_flashcard_output and not flashcards:
+            st.warning(
+                "No flashcards were found in the generated output. Try generating again or choose Full Revision Pack."
             )
 
 
@@ -383,7 +466,7 @@ def make_result_preview(result, max_characters=1400):
     return preview + "\n\n..."
 
 
-def show_result_area(result):
+def show_result_area(result, output_type):
     preview_text = make_result_preview(result)
 
     with st.expander("Preview generated content", expanded=False):
@@ -397,12 +480,21 @@ def show_result_area(result):
                 "This is a short preview. The full generated content is included in the downloads."
             )
 
-    show_download_buttons(result)
+    show_download_buttons(result, output_type)
 
 
 # --------------------------------------------------
 # Generate button logic
 # --------------------------------------------------
+
+def get_export_summary(output_type):
+    if output_type == "Flashcards":
+        return "Interactive deck + CSV"
+
+    if output_type == "Full Revision Pack":
+        return "PDF + Markdown + Deck"
+
+    return "PDF + Markdown"
 
 generate_clicked = st.button("Generate Revision Pack")
 
@@ -449,10 +541,12 @@ if generate_clicked:
             )
 
         with summary_col_4:
+            export_summary = get_export_summary(output_type)
+
             st.markdown(
-                """
+                f"""
                 <div class="metric-card">
-                    <strong>Exports</strong><br>PDF + Markdown + Flashcards
+                    <strong>Exports</strong><br>{export_summary}
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -483,7 +577,7 @@ if generate_clicked:
                 pass
 
             result = fake_output()
-            show_result_area(result)
+            show_result_area(result, output_type)
 
         else:
             st.warning("Live API mode: this may use API credits.")
@@ -498,6 +592,7 @@ if generate_clicked:
                     subject=subject,
                     difficulty=difficulty,
                     style=style,
+                    flashcard_count=flashcard_count,
                 )
 
                 try:
@@ -522,7 +617,7 @@ if generate_clicked:
                     except Exception:
                         pass
 
-                    show_result_area(result)
+                    show_result_area(result, output_type)
 
                 except Exception as error:
                     clear_loading_area(loading_area)
@@ -549,11 +644,11 @@ with feedback_col:
                 <strong>Help improve {APP_NAME}</strong><br><br>
                 Feedback is collected through a short form. You do not need to provide
                 your name or email unless you want a reply.
-                <br><br>
+                <div class="feedback-button-gap"></div>
                 <a class="feedback-button" href="{FEEDBACK_FORM_URL}" target="_blank">
                     Open feedback form
                 </a>
-                <br><br>
+                <div class="feedback-link-gap"></div>
                 You can also view the project on GitHub:<br>
                 <a href="{GITHUB_REPO_URL}" target="_blank">
                     GitHub repository
