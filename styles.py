@@ -930,6 +930,10 @@ CUSTOM_CSS = """
    Strong downloads card styling
    -------------------------------------------------- */
 
+.download-card-marker {
+    display: none;
+}
+
 .st-key-downloads_card {
     background: rgba(255, 248, 241, 0.94) !important;
     border: 1.5px solid rgba(217, 130, 91, 0.34) !important;
@@ -937,32 +941,47 @@ CUSTOM_CSS = """
     box-shadow:
         0 16px 36px rgba(30, 58, 95, 0.10),
         inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
-    padding: 1.2rem !important;
+    padding: 1.55rem 1.35rem 1.25rem 1.35rem !important;
+    margin-top: 1.4rem !important;
+    margin-bottom: 2.5rem !important;
 }
 
 .st-key-downloads_card [data-testid="stVerticalBlock"] {
     gap: 0.85rem !important;
 }
 
-.st-key-downloads_card .download-card-title {
-    font-size: 1.2rem;
+.download-card-main-title {
+    font-size: 2rem;
     font-weight: 850;
     color: var(--deep-blue) !important;
-    margin: 0 0 0.15rem 0;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.025em;
 }
 
-.st-key-downloads_card .download-card-caption {
-    color: var(--mid-blue) !important;
-    font-size: 0.95rem;
-    line-height: 1.45;
+.download-section-subheading {
+    font-size: 1.22rem;
+    font-weight: 850;
+    color: var(--deep-blue) !important;
+    margin-top: 1.35rem;
     margin-bottom: 0.35rem;
 }
 
-.st-key-downloads_card .download-helper-text {
+.download-card-caption {
     color: var(--mid-blue) !important;
-    font-size: 0.94rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 0 !important;
+}
+
+.download-button-spacer {
+    height: 0.7rem;
+}
+
+.download-helper-text {
+    color: var(--mid-blue) !important;
+    font-size: 0.95rem;
     line-height: 1.45;
-    padding-top: 0.62rem;
+    padding-top: 0.65rem;
 }
 
 .st-key-downloads_card div.stDownloadButton > button {
@@ -971,9 +990,14 @@ CUSTOM_CSS = """
     font-weight: 850 !important;
 }
 
+.st-key-downloads_card div.stDownloadButton > button p,
+.st-key-downloads_card div.stDownloadButton > button span {
+    font-weight: 850 !important;
+}
+
 .st-key-downloads_card [data-testid="stExpander"] {
     width: 100%;
-    margin-top: 0.4rem;
+    margin-top: 0.75rem;
 }
 
 .st-key-downloads_card [data-testid="stExpander"] summary {
