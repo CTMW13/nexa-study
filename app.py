@@ -56,6 +56,22 @@ st.set_page_config(
 
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
+# --------------------------------------------------
+# Session state
+# --------------------------------------------------
+
+if "last_result" not in st.session_state:
+    st.session_state["last_result"] = None
+
+if "last_output_type" not in st.session_state:
+    st.session_state["last_output_type"] = None
+
+if "last_subject" not in st.session_state:
+    st.session_state["last_subject"] = None
+
+if "last_difficulty" not in st.session_state:
+    st.session_state["last_difficulty"] = None
+
 
 # --------------------------------------------------
 # Hero section
@@ -658,6 +674,12 @@ if generate_clicked:
                 pass
 
             result = fake_output()
+
+            st.session_state["last_result"] = result
+            st.session_state["last_output_type"] = output_type
+            st.session_state["last_subject"] = subject
+            st.session_state["last_difficulty"] = difficulty
+
             show_result_area(result, output_type)
 
         else:
@@ -688,6 +710,11 @@ if generate_clicked:
                         show_duck_loading(duck_slot, f"Generating your {output_type.lower()}...")
                         result = generate_live_output(client, prompt)
 
+                        st.session_state["last_result"] = result
+                        st.session_state["last_output_type"] = output_type
+                        st.session_state["last_subject"] = subject
+                        st.session_state["last_difficulty"] = difficulty
+
                         show_duck_loading(duck_slot, "Preparing your downloads...")
                         time.sleep(0.8)
 
@@ -704,6 +731,49 @@ if generate_clicked:
                     clear_loading_area(loading_area)
                     st.error("Something went wrong.")
                     st.code(str(error))
+                
+if not generate_clicked and st.session_state["last_result"]:
+    st.markdown(
+        '<div class="section-title">Last generated result</div>',
+        unsafe_allow_html=True,
+    )
+
+    summary_col_1, summary_col_2, summary_col_3 = st.columns(3)
+
+    with summary_col_1:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <strong>Subject</strong><br>{st.session_state["last_subject"]}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with summary_col_2:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <strong>Level</strong><br>{st.session_state["last_difficulty"]}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with summary_col_3:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <strong>Output</strong><br>{st.session_state["last_output_type"]}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    show_result_area(
+        st.session_state["last_result"],
+        st.session_state["last_output_type"],
+    )                
 
 
 # --------------------------------------------------

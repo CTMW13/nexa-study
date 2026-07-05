@@ -1,6 +1,18 @@
 import html
 import json
 
+def escape_json_for_script(data):
+    """
+    Safely escapes JSON before embedding it inside a <script> tag.
+    """
+    json_data = json.dumps(data, ensure_ascii=False)
+
+    return (
+        json_data
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+    )
 
 def flashcards_to_interactive_html(flashcards, title="Nexa Study Flashcards"):
     """
@@ -21,7 +33,7 @@ def flashcards_to_interactive_html(flashcards, title="Nexa Study Flashcards"):
         if str(card.get("front", "")).strip() and str(card.get("back", "")).strip()
     ]
 
-    flashcards_json = json.dumps(safe_flashcards, ensure_ascii=False)
+    flashcards_json = escape_json_for_script(safe_flashcards)
 
     return f"""<!DOCTYPE html>
 <html lang="en">

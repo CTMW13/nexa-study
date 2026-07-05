@@ -785,8 +785,8 @@ CUSTOM_CSS = """
     }
 
     /* --------------------------------------------------
-    Final UI fixes
-    -------------------------------------------------- */
+       Final UI fixes
+       -------------------------------------------------- */
 
     /* Generate button text boldness */
     div.stButton > button,
@@ -837,172 +837,98 @@ CUSTOM_CSS = """
     }
 
     /* --------------------------------------------------
-    Download card alignment and styling
-    -------------------------------------------------- */
+       Downloads section
+       -------------------------------------------------- */
 
     .download-card-marker {
         display: none;
     }
 
-    /* Target the actual bordered container that holds the downloads */
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-marker),
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title),
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text) {
+    .st-key-downloads_card {
         background: rgba(255, 248, 241, 0.94) !important;
         border: 1.5px solid rgba(217, 130, 91, 0.34) !important;
         border-radius: 22px !important;
         box-shadow:
             0 16px 36px rgba(30, 58, 95, 0.10),
             inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
-        padding: 1.2rem !important;
+
+        /* Keep heading near the top-left */
+        padding-top: 0.85rem !important;
+        padding-left: 1.8rem !important;
+        padding-right: 1.8rem !important;
+
+        /* Smaller, neater card height */
+        padding-bottom: 1.6rem !important;
+        min-height: 190px !important;
+
+        margin-top: 1.25rem !important;
+        margin-bottom: 0.9rem !important;
     }
 
-    /* Add cleaner internal spacing */
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-marker)
-    [data-testid="stVerticalBlock"],
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
-    [data-testid="stVerticalBlock"],
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
-    [data-testid="stVerticalBlock"] {
-        gap: 0.85rem !important;
+    .st-key-downloads_card [data-testid="stVerticalBlock"] {
+        gap: 0.65rem !important;
     }
 
-    /* Title inside the downloads card */
-    .download-card-title {
-        font-size: 1.2rem;
+    .download-card-main-title {
+        font-size: 2rem;
         font-weight: 850;
         color: var(--deep-blue) !important;
-        margin: 0 0 0.15rem 0;
+        margin: 0 0 0.55rem 0 !important;
+        letter-spacing: -0.025em;
     }
 
-    /* Caption under the title */
+    .download-section-subheading {
+        font-size: 1.22rem;
+        font-weight: 850;
+        color: var(--deep-blue) !important;
+        margin-top: 1rem;
+        margin-bottom: 0.3rem;
+    }
+
     .download-card-caption {
+        color: var(--mid-blue) !important;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 0 !important;
+    }
+
+    .download-button-spacer {
+        height: 0.45rem;
+    }
+
+    .download-helper-text {
         color: var(--mid-blue) !important;
         font-size: 0.95rem;
         line-height: 1.45;
-        margin-bottom: 0.35rem;
+        padding-top: 0.55rem;
     }
 
-    /* Helper text beside the interactive deck button */
-    .download-helper-text {
-        color: var(--mid-blue) !important;
-        font-size: 0.94rem;
-        line-height: 1.45;
-        padding-top: 0.62rem;
-    }
-
-    /* Make download buttons fill their column neatly */
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
-    div.stDownloadButton > button,
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
-    div.stDownloadButton > button {
+    .st-key-downloads_card div.stDownloadButton > button {
         width: 100%;
         min-height: 3rem;
         font-weight: 850 !important;
     }
 
-    /* Keep advanced export aligned inside the same card */
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
-    [data-testid="stExpander"],
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
-    [data-testid="stExpander"] {
-        width: 100%;
-        margin-top: 0.4rem;
+    .st-key-downloads_card div.stDownloadButton > button p,
+    .st-key-downloads_card div.stDownloadButton > button span {
+        font-weight: 850 !important;
     }
 
-    /* Make the advanced dropdown less visually overpowering inside downloads */
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
-    [data-testid="stExpander"] summary,
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-helper-text)
-    [data-testid="stExpander"] summary {
+    .st-key-downloads_card [data-testid="stExpander"] {
+        width: 100%;
+        margin-top: 0.65rem;
+    }
+
+    .st-key-downloads_card [data-testid="stExpander"] summary {
         border-radius: 14px !important;
     }
 
-    /* Remove random heading spacing inside the download card */
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
-    [data-testid="stMarkdownContainer"] h3,
-    [data-testid="stVerticalBlockBorderWrapper"]:has(.download-card-title)
-    [data-testid="stMarkdownContainer"] h4 {
-        margin-top: 0 !important;
-    }
-
     /* --------------------------------------------------
-   Strong downloads card styling
-   -------------------------------------------------- */
+       Generated result spacing
+       -------------------------------------------------- */
 
-.download-card-marker {
-    display: none;
-}
-
-.st-key-downloads_card {
-    background: rgba(255, 248, 241, 0.94) !important;
-    border: 1.5px solid rgba(217, 130, 91, 0.34) !important;
-    border-radius: 22px !important;
-    box-shadow:
-        0 16px 36px rgba(30, 58, 95, 0.10),
-        inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
-    padding: 1.55rem 1.35rem 1.25rem 1.35rem !important;
-    margin-top: 1.4rem !important;
-    margin-bottom: 2.5rem !important;
-}
-
-.st-key-downloads_card [data-testid="stVerticalBlock"] {
-    gap: 0.85rem !important;
-}
-
-.download-card-main-title {
-    font-size: 2rem;
-    font-weight: 850;
-    color: var(--deep-blue) !important;
-    margin: 0 0 1rem 0;
-    letter-spacing: -0.025em;
-}
-
-.download-section-subheading {
-    font-size: 1.22rem;
-    font-weight: 850;
-    color: var(--deep-blue) !important;
-    margin-top: 1.35rem;
-    margin-bottom: 0.35rem;
-}
-
-.download-card-caption {
-    color: var(--mid-blue) !important;
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 0 !important;
-}
-
-.download-button-spacer {
-    height: 0.7rem;
-}
-
-.download-helper-text {
-    color: var(--mid-blue) !important;
-    font-size: 0.95rem;
-    line-height: 1.45;
-    padding-top: 0.65rem;
-}
-
-.st-key-downloads_card div.stDownloadButton > button {
-    width: 100%;
-    min-height: 3rem;
-    font-weight: 850 !important;
-}
-
-.st-key-downloads_card div.stDownloadButton > button p,
-.st-key-downloads_card div.stDownloadButton > button span {
-    font-weight: 850 !important;
-}
-
-.st-key-downloads_card [data-testid="stExpander"] {
-    width: 100%;
-    margin-top: 0.75rem;
-}
-
-.st-key-downloads_card [data-testid="stExpander"] summary {
-    border-radius: 14px !important;
-}
-
+    [data-testid="stExpander"] {
+        margin-top: 0.85rem;
+    }
 </style>
 """
