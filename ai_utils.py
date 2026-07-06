@@ -1,6 +1,8 @@
 import os
 
 from dotenv import load_dotenv
+from openai import OpenAI
+
 from config import OPENAI_MODEL
 
 def get_api_key(streamlit_secrets=None):
