@@ -4,7 +4,9 @@ Nexa Study is an AI-powered study tool for STEM learners. It turns messy notes i
 
 The app was built with Python, Streamlit, the OpenAI API, and ReportLab as a portfolio project and MVP for exploring AI-assisted study tools.
 
-![Nexa Study home screen](assets\nexa-study-intro.png)![Nexa Study home screen](assets/nexa-study-home.png)
+![Nexa Study home screen](assets/nexa-study-intro.png)
+
+![Nexa Study home screen](assets/nexa-study-home.png)
 
 
 ## Why I built this
