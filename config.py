@@ -1,5 +1,11 @@
 APP_NAME = "Nexa Study"
 
+# --------------------------------------------------
+# AI model settings
+# --------------------------------------------------
+
+OPENAI_MODEL = "gpt-5.4-mini"
+
 APP_TAGLINE = (
     "Turn messy STEM notes into clear revision packs, flashcards, quizzes, "
     "worked examples, and downloadable study materials."

@@ -1,8 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from openai import OpenAI
-
+from config import OPENAI_MODEL
 
 def get_api_key(streamlit_secrets=None):
     """
@@ -181,7 +180,7 @@ A: Density.
 """
 
 
-def generate_live_output(client, prompt, model="gpt-5.5"):
+def generate_live_output(client, prompt, model=OPENAI_MODEL):
     """
     Sends the prompt to the OpenAI Responses API and returns the generated text.
     """
