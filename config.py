@@ -12,7 +12,7 @@ APP_TAGLINE = (
 )
 
 FEEDBACK_FORM_URL = "https://tally.so/r/pbMDpP"
-GITHUB_REPO_URL = "https://github.com/CTMW13/engineernotes-ai"
+GITHUB_REPO_URL = "https://github.com/CTMW13/nexa-study"
 
 DAILY_SPARK_TITLE = "Soft robotics is changing how machines interact with the real world"
 

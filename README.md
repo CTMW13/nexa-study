@@ -96,8 +96,8 @@ requirements.txt      Python dependencies
 Clone the repository:
 
 ```bash
-git clone https://github.com/CTMW13/engineernotes-ai.git
-cd engineernotes-ai
+git clone https://github.com/CTMW13/nexa-study.git
+cd nexa-study
 ```
 
 Create and activate a virtual environment:
