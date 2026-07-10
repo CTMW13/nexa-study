@@ -47,7 +47,7 @@ For me, this project is also a way to explore how AI can support learning withou
 
 Nexa Study can generate a downloadable interactive flashcard deck.
 
-The deck opens in a browser and works offline. Allowing learners to type their answer, reveal the official answer, and mark themselves correct or wrong.
+The deck opens in a browser and works offline, allowing learners to type their answer, reveal the official answer, and mark themselves correct or wrong.
 
 ![Interactive flashcard deck](assets/nexa-study-flashcards.png)
 
